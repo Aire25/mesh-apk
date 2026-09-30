@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosial Media Offline Profesional Modern</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'fb-blue': '#0866FF',
+                        'fb-darkCard': '#242526',
+                        'fb-darkInput': '#3A3B3C',
+                        'fb-darkBorder': '#393A3B',
+                        'fb-darkSubtext': '#B0B3B8'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-[#18191a] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-fb-darkCard border-b border-slate-200 dark:border-fb-darkBorder shadow-sm px-4 h-14 flex items-center justify-between">
+        <!-- Brand & Search Bar -->
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md">
+                <i class="fa-solid fa-m"></i>
+            </div>
+            <div class="hidden sm:flex items-center bg-slate-100 dark:bg-fb-darkInput px-3 py-2 rounded-full space-x-2 w-64">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
+                <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Cari postingan..." class="bg-transparent text-sm outline-none w-full dark:text-white">
+            </div>
+        </div>
+
+        <!-- Center Tabs (Desktop) -->
+        <div class="hidden md:flex items-center space-x-2 h-full">
+            <button onclick="switchTab('feed')" id="nav-feed" class="nav-btn h-full px-5 flex items-center justify-center border-b-4 border-fb-blue text-fb-blue dark:text-blue-500 font-semibold transition rounded-t-lg" title="Feed">
+                <i class="fa-solid fa-house text-xl"></i>
+            </button>
+            <button onclick="switchTab('watch')" id="nav-watch" class="nav-btn h-full px-5 flex items-center justify-center border-b-4 border-transparent text-slate-500 dark:text-fb-darkSubtext hover:bg-slate-50 dark:hover:bg-fb-darkInput transition rounded-lg" title="Watch & Video">
+                <i class="fa-solid fa-play text-xl"></i>
+            </button>
+            <button onclick="switchTab('market')" id="nav-market" class="nav-btn h-full px-5 flex items-center justify-center border-b-4 border-transparent text-slate-500 dark:text-fb-darkSubtext hover:bg-slate-50 dark:hover:bg-fb-darkInput transition rounded-lg" title="Marketplace">
+                <i class="fa-solid fa-store text-xl"></i>
+            </button>
+            <button onclick="switchTab('share')" id="nav-share" class="nav-btn h-full px-5 flex items-center justify-center border-b-4 border-transparent text-slate-500 dark:text-fb-darkSubtext hover:bg-slate-50 dark:hover:bg-fb-darkInput transition rounded-lg" title="MeshShare (Kirim Berkas ShareIt)">
+                <i class="fa-solid fa-wifi text-xl"></i>
+            </button>
+            <button onclick="switchTab('messages')" id="nav-messages" class="nav-btn h-full px-5 flex items-center justify-center border-b-4 border-transparent text-slate-500 dark:text-fb-darkSubtext hover:bg-slate-50 dark:hover:bg-fb-darkInput transition rounded-lg relative" title="Pesan">
+                <i class="fa-solid fa-comment-dots text-xl"></i>
+                <span id="msg-badge" class="absolute top-2 right-4 w-2 h-2 bg-red-500 rounded-full hidden"></span>
+            </button>
+        </div>
+
+        <!-- Right Side Icons & Profile Menu Trigger -->
+        <div class="flex items-center space-x-2 relative">
+            <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-fb-darkInput flex items-center justify-center text-slate-700 dark:text-fb-darkSubtext hover:bg-slate-300 dark:hover:bg-slate-700 transition" title="Tema">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <div class="relative">
+                <button onclick="toggleProfileDropdown()" class="flex items-center space-x-1 p-0.5 rounded-full hover:ring-2 hover:ring-fb-blue transition cursor-pointer">
+                    <img id="header-avatar" src="" alt="Profil" class="w-10 h-10 rounded-full object-cover border-2 border-fb-blue bg-slate-300">
+                </button>
+                <!-- Profile & Settings Dropdown Menu -->
+                <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-fb-darkCard rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder py-2 z-50 text-sm">
+                    <div class="px-4 py-3 border-b border-slate-100 dark:border-fb-darkBorder flex items-center space-x-3">
+                        <img id="dropdown-avatar" class="w-12 h-12 rounded-full object-cover border">
+                        <div class="overflow-hidden">
+                            <h4 id="dropdown-name" class="font-bold truncate">Pengguna</h4>
+                            <span class="text-xs text-emerald-500 flex items-center mt-0.5"><span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> <span id="status-text-label">Aktif (Online Lokal)</span></span>
+                        </div>
+                    </div>
+                    <div class="py-1">
+                        <button onclick="switchTab('profile'); toggleProfileDropdown();" class="w-full text-left px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-fb-darkInput flex items-center space-x-3 font-medium">
+                            <i class="fa-solid fa-user text-slate-500 w-5"></i><span>Lihat Profil Saya</span>
+                        </button>
+                        <button onclick="openSettingsModal()" class="w-full text-left px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-fb-darkInput flex items-center space-x-3 font-medium">
+                            <i class="fa-solid fa-gear text-slate-500 w-5"></i><span>Pengaturan Aplikasi</span>
+                        </button>
+                        <button onclick="showBackupModal(); toggleProfileDropdown();" class="w-full text-left px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-fb-darkInput flex items-center space-x-3 font-medium">
+                            <i class="fa-solid fa-database text-slate-500 w-5"></i><span>Cadangan / Pulihkan Data</span>
+                        </button>
+                        <button onclick="openServerClientModal(); toggleProfileDropdown();" class="w-full text-left px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-fb-darkInput flex items-center space-x-3 font-medium">
+                            <i class="fa-solid fa-network-wired text-slate-500 w-5"></i><span>Server/Client Mode</span>
+                        </button>
+                        <button onclick="switchTab('share'); toggleProfileDropdown();" class="w-full text-left px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-fb-darkInput flex items-center space-x-3 font-medium">
+                            <i class="fa-solid fa-share-nodes text-slate-500 w-5"></i><span>MeshShare (Kirim Berkas)</span>
+                        </button>
+                    </div>
+                    <div class="border-t border-slate-100 dark:border-fb-darkBorder py-1">
+                        <button onclick="exitApp()" class="w-full text-left px-4 py-2.5 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 flex items-center space-x-3 font-bold">
+                            <i class="fa-solid fa-power-off w-5"></i><span>Keluar Aplikasi (Exit)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto pb-20 md:pb-6">
+        <div class="max-w-4xl mx-auto px-0 sm:px-4 py-4">
+            
+            <!-- TAB 1: FEED / BERANDA -->
+            <div id="tab-feed" class="space-y-4">
+                <!-- Stories Carousel -->
+                <div class="flex space-x-2 overflow-x-auto hide-scrollbar py-1 px-2 sm:px-0">
+                    <div onclick="openCreateStoryModal()" class="min-w-[110px] h-[190px] rounded-2xl bg-white dark:bg-fb-darkCard shadow-sm border border-slate-200 dark:border-fb-darkBorder flex flex-col overflow-hidden cursor-pointer hover:scale-[1.02] transition relative group">
+                        <div class="h-[130px] bg-slate-100 dark:bg-fb-darkInput relative">
+                            <img id="story-self-avatar" src="" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 bg-white dark:bg-fb-darkCard flex flex-col items-center justify-end pb-2 relative">
+                            <div class="absolute -top-4 w-8 h-8 rounded-full bg-fb-blue border-4 border-white dark:border-fb-darkCard flex items-center justify-center text-white text-xs shadow">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <span class="text-xs font-bold mt-2 text-slate-800 dark:text-white">Buat Cerita</span>
+                        </div>
+                    </div>
+                    <div id="stories-container" class="flex space-x-2"></div>
+                </div>
+
+                <!-- Create Post Card -->
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder p-4">
+                    <div class="flex space-x-3 items-center">
+                        <img id="post-input-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border">
+                        <button onclick="openCreatePostModal()" class="flex-1 bg-slate-100 dark:bg-fb-darkInput text-slate-500 dark:text-fb-darkSubtext px-4 py-2.5 rounded-full text-left text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition font-medium cursor-pointer">
+                            Apa yang Anda pikirkan, <span id="post-input-name" class="font-bold">Pengguna</span>?
+                        </button>
+                    </div>
+                    <hr class="my-3 border-slate-100 dark:border-fb-darkBorder">
+                    <div class="grid grid-cols-3 gap-1 text-slate-600 dark:text-fb-darkSubtext font-semibold text-xs sm:text-sm">
+                        <button onclick="openCreatePostModal()" class="flex items-center justify-center space-x-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-fb-darkInput transition cursor-pointer">
+                            <i class="fa-solid fa-camera text-rose-500 text-lg"></i>
+                            <span>Kamera / Foto</span>
+                        </button>
+                        <button onclick="openCreatePostModal()" class="flex items-center justify-center space-x-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-fb-darkInput transition cursor-pointer">
+                            <i class="fa-solid fa-video text-emerald-500 text-lg"></i>
+                            <span>Video Lokal</span>
+                        </button>
+                        <button onclick="openCreatePostModal()" class="flex items-center justify-center space-x-2 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-fb-darkInput transition cursor-pointer">
+                            <i class="fa-solid fa-microphone text-amber-500 text-lg"></i>
+                            <span>Rekam Suara</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Network Status Banner -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-none sm:rounded-2xl shadow-lg p-4 text-white flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+                            <i class="fa-solid fa-tower-broadcast text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 id="network-mode-banner-title" class="font-bold text-sm">Mode Peer-to-Peer Lokal Aktif</h3>
+                            <p id="network-mode-banner-desc" class="text-xs text-blue-100 mt-0.5">Hardware GPS, Wi-Fi Direct & Bluetooth Siap Terhubung.</p>
+                        </div>
+                    </div>
+                    <button onclick="openServerClientModal()" class="bg-white text-blue-700 hover:bg-blue-50 text-xs font-bold px-3.5 py-2 rounded-xl transition shadow cursor-pointer">
+                        Panduan Join
+                    </button>
+                </div>
+
+                <!-- Posts Feed Stream -->
+                <div id="posts-container" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB 2: WATCH / VIDEO LOKAL -->
+            <div id="tab-watch" class="hidden space-y-4">
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-extrabold flex items-center">
+                            <i class="fa-solid fa-play text-fb-blue mr-2"></i> Watch & Video Lokal
+                        </h2>
+                        <button onclick="openCreateVideoModal()" class="bg-fb-blue hover:bg-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i><span>Upload Video</span>
+                        </button>
+                    </div>
+                    <div id="videos-container" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: MARKETPLACE -->
+            <div id="tab-market" class="hidden space-y-4">
+                <div class="flex justify-between items-center bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder p-4">
+                    <div>
+                        <h2 class="text-lg font-extrabold flex items-center">
+                            <i class="fa-solid fa-store text-emerald-500 mr-2"></i> Marketplace Offline
+                        </h2>
+                        <p class="text-xs text-slate-500">Jual beli antar perangkat di sekitar Anda</p>
+                    </div>
+                    <button onclick="openCreateProductModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1 cursor-pointer">
+                        <i class="fa-solid fa-plus"></i><span>Jual Barang</span>
+                    </button>
+                </div>
+                <div id="marketplace-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- TAB 4: MESHSHARE (SHAREIT OFFLINE) -->
+            <div id="tab-share" class="hidden space-y-4">
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder p-6 text-center space-y-4">
+                    <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 text-fb-blue rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold">Mesh Share - Berbagi Berkas</h2>
+                        <p class="text-xs text-slate-500 mt-1">Kirim dan terima file, foto, video, atau dokumen secara kilat tanpa internet (Mirip ShareIt / Nearby Share).</p>
+                    </div>
+                    <div class="p-6 bg-slate-50 dark:bg-fb-darkInput rounded-2xl border-2 border-dashed border-slate-300 dark:border-fb-darkBorder space-y-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400"></i>
+                        <p class="text-sm font-bold">Pilih berkas dari memori hardware perangkat Anda</p>
+                        <input type="file" id="share-file-input" onchange="handleMeshShareFile(event)" class="text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-fb-blue file:text-white cursor-pointer mx-auto block">
+                    </div>
+                    <div id="shared-files-history" class="space-y-2 text-left pt-2">
+                        <h4 class="font-bold text-xs uppercase text-slate-400">Riwayat Berkas Terkirim/Diterima</h4>
+                        <div id="share-list-container" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: MESSAGES (MESSENGER OFFLINE) -->
+            <div id="tab-messages" class="hidden space-y-4">
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder overflow-hidden flex flex-col h-[75vh]">
+                    <div class="p-4 border-b border-slate-200 dark:border-fb-darkBorder font-extrabold text-lg flex items-center justify-between">
+                        <span>Pesan Percakapan Offline</span>
+                        <button onclick="openNewChatModal()" class="text-xs bg-fb-blue text-white px-3 py-1.5 rounded-xl font-bold cursor-pointer">Chat Baru</button>
+                    </div>
+                    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                        <div id="chat-list-sidebar" class="w-full md:w-1/3 border-r border-slate-200 dark:border-fb-darkBorder overflow-y-auto divide-y divide-slate-100 dark:divide-fb-darkBorder"></div>
+                        <div id="chat-conversation-area" class="flex-1 flex flex-col bg-slate-50 dark:bg-[#1c1d1e] hidden md:flex">
+                            <div class="p-4 bg-white dark:bg-fb-darkCard border-b border-slate-200 dark:border-fb-darkBorder flex items-center space-x-3">
+                                <img id="active-chat-avatar" class="w-10 h-10 rounded-full object-cover">
+                                <div>
+                                    <h4 id="active-chat-name" class="font-bold text-sm">Pilih Percakapan</h4>
+                                    <span class="text-xs text-emerald-500 font-medium">Offline Lokal</span>
+                                </div>
+                            </div>
+                            <div id="chat-messages-scroll" class="flex-1 overflow-y-auto p-4 space-y-3">
+                                <div class="text-center text-slate-400 text-sm py-12">Pilih salah satu obrolan di sebelah kiri untuk mulai berkirim pesan.</div>
+                            </div>
+                            <div class="p-3 bg-white dark:bg-fb-darkCard border-t border-slate-200 dark:border-fb-darkBorder flex items-center space-x-2">
+                                <input type="text" id="chat-input-msg" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Ketik pesan offline..." class="flex-1 bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-full text-sm outline-none border-none dark:text-white">
+                                <button onclick="sendChatMessage()" class="w-10 h-10 bg-fb-blue text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition shadow cursor-pointer">
+                                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: PROFILE -->
+            <div id="tab-profile" class="hidden space-y-4">
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+                    <div class="h-44 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative"></div>
+                    <div class="px-6 pb-6 relative">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end -mt-16 mb-4 space-y-3 sm:space-y-0">
+                            <img id="profile-page-avatar" alt="Profile" class="w-32 h-32 rounded-full border-4 border-white dark:border-fb-darkCard object-cover shadow-xl bg-white">
+                            <button onclick="openProfileModal()" class="bg-slate-200 dark:bg-fb-darkInput hover:bg-slate-300 dark:hover:bg-slate-600 text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2 cursor-pointer">
+                                <i class="fa-solid fa-pen"></i><span>Edit Profil & Foto Hardware</span>
+                            </button>
+                        </div>
+                        <h2 id="profile-page-name" class="text-2xl font-extrabold">Nama Pengguna</h2>
+                        <p id="profile-page-bio" class="text-sm text-slate-600 dark:text-fb-darkSubtext mt-1">Belum ada bio singkat.</p>
+                        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-fb-darkBorder flex space-x-6 text-sm text-slate-500 dark:text-fb-darkSubtext">
+                            <div><strong id="user-posts-count" class="text-slate-900 dark:text-white text-base">0</strong> Postingan</div>
+                            <div><strong class="text-slate-900 dark:text-white text-base">100%</strong> Offline Lokal</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="font-extrabold text-base px-1">Postingan Anda</h3>
+                    <div id="user-posts-container" class="space-y-4"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-fb-darkCard border-t border-slate-200 dark:border-fb-darkBorder flex justify-around items-center h-14 z-50 px-1">
+        <button onclick="switchTab('feed')" id="mob-nav-feed" class="mob-nav flex-1 h-full flex items-center justify-center text-fb-blue dark:text-blue-500 text-lg font-bold">
+            <i class="fa-solid fa-house"></i>
+        </button>
+        <button onclick="switchTab('watch')" id="mob-nav-watch" class="mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg">
+            <i class="fa-solid fa-play"></i>
+        </button>
+        <button onclick="switchTab('market')" id="mob-nav-market" class="mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg">
+            <i class="fa-solid fa-store"></i>
+        </button>
+        <button onclick="switchTab('share')" id="mob-nav-share" class="mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg">
+            <i class="fa-solid fa-wifi"></i>
+        </button>
+        <button onclick="switchTab('messages')" id="mob-nav-messages" class="mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg relative">
+            <i class="fa-solid fa-comment-dots"></i>
+            <span id="mob-msg-badge" class="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full hidden"></span>
+        </button>
+        <button onclick="switchTab('profile')" id="mob-nav-profile" class="mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </nav>
+
+    <!-- MODAL: Settings Lengkap -->
+    <div id="modal-settings" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg flex items-center"><i class="fa-solid fa-gear mr-2 text-fb-blue"></i> Pengaturan Aplikasi</h3>
+                <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4 text-sm">
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                    <div>
+                        <h4 class="font-bold">Setting Feed</h4>
+                        <p class="text-xs text-slate-500">Tampilkan pembaruan linimasa otomatis</p>
+                    </div>
+                    <input type="checkbox" id="setting-feed-auto" checked class="w-5 h-5 accent-fb-blue rounded cursor-pointer">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                    <div>
+                        <h4 class="font-bold">Setting Pesan</h4>
+                        <p class="text-xs text-slate-500">Notifikasi bunyi/tanda pesan lokal</p>
+                    </div>
+                    <input type="checkbox" id="setting-msg-sound" checked class="w-5 h-5 accent-fb-blue rounded cursor-pointer">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                    <div>
+                        <h4 class="font-bold">Status Aktif / Non-Aktif</h4>
+                        <p class="text-xs text-slate-500">Tampilkan status online pada profil</p>
+                    </div>
+                    <input type="checkbox" id="setting-status-active" checked onchange="toggleActiveStatusSetting(this.checked)" class="w-5 h-5 accent-fb-blue rounded cursor-pointer">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                    <div>
+                        <h4 class="font-bold">Server / Client Mode</h4>
+                        <p class="text-xs text-slate-500">Kelola peran node jaringan offline</p>
+                    </div>
+                    <button onclick="openServerClientModal(); closeSettingsModal();" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition cursor-pointer">Kelola</button>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                    <div>
+                        <h4 class="font-bold">Backup / Restore</h4>
+                        <p class="text-xs text-slate-500">Cadangkan atau pulihkan data JSON</p>
+                    </div>
+                    <button onclick="showBackupModal(); closeSettingsModal();" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition cursor-pointer">Buka</button>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder flex space-x-2">
+                <button onclick="closeSettingsModal()" class="w-full bg-fb-blue text-white font-bold py-2.5 rounded-xl text-sm shadow cursor-pointer">Simpan Pengaturan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Server / Client & Cara Join Perangkat Lain -->
+    <div id="modal-server-client" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg flex items-center"><i class="fa-solid fa-network-wired text-fb-blue mr-2"></i> Panduan Server / Client & Join Perangkat</h3>
+                <button onclick="closeServerClientModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4 text-sm max-h-[70vh] overflow-y-auto leading-relaxed">
+                <div class="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-xl border border-blue-200 dark:border-blue-900/50">
+                    <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Cara Kerja Jaringan Offline MeshNet</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">Aplikasi murni offline tanpa kuota. Semua perangkat terhubung dalam satu area lokal via <strong>Wi-Fi Hotspot</strong>, <strong>Wi-Fi Direct</strong>, atau <strong>Bluetooth</strong>.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl">
+                        <div class="flex justify-between items-center mb-1">
+                            <h5 class="font-bold text-xs uppercase text-slate-500">Pilih Mode Perangkat Ini</h5>
+                            <span id="current-mode-badge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-500 text-white">P2P</span>
+                        </div>
+                        <div class="flex space-x-2 mt-2">
+                            <button onclick="setNodeMode('p2p')" class="flex-1 bg-fb-blue text-white text-xs font-bold py-2 rounded-xl shadow cursor-pointer">P2P Mandiri</button>
+                            <button onclick="setNodeMode('server')" class="flex-1 bg-indigo-600 text-white text-xs font-bold py-2 rounded-xl shadow cursor-pointer">Server Node</button>
+                            <button onclick="setNodeMode('client')" class="flex-1 bg-amber-600 text-white text-xs font-bold py-2 rounded-xl shadow cursor-pointer">Client Node</button>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 dark:border-fb-darkBorder p-4 rounded-xl space-y-2">
+                        <h4 class="font-bold">Langkah Agar Pengguna Lain Ikut Bergabung:</h4>
+                        <ol class="list-decimal list-inside text-xs space-y-1.5 text-slate-600 dark:text-fb-darkSubtext">
+                            <li>Salah satu HP menyalakan <strong>Hotspot Wi-Fi</strong> (Tanpa internet/kuota).</li>
+                            <li>HP lain di sekitar menyambungkan Wi-Fi ke Hotspot HP tersebut.</li>
+                            <li>Buka aplikasi MeshNet Pro di semua HP.</li>
+                            <li>Gunakan menu <strong>MeshShare</strong> atau <strong>Ekspor/Impor File Cadangan JSON</strong> untuk sinkronisasi data instan antar perangkat.</li>
+                        </ol>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/50 text-xs flex items-center justify-between">
+                        <span>GPS & Sensor Hardware Lokal:</span>
+                        <span class="font-bold text-emerald-600"><i class="fa-solid fa-location-crosshairs mr-1"></i> Aktif (-6.2088, 106.8456)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder">
+                <button onclick="closeServerClientModal()" class="w-full bg-fb-blue text-white font-bold py-2.5 rounded-xl text-sm shadow cursor-pointer">Mengerti & Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Create Post -->
+    <div id="modal-post" class="fixed inset-0 bg-black/70 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg flex-1 text-center">Buat Postingan Profesional</h3>
+                <button onclick="closeCreatePostModal()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 hover:bg-slate-200 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-5 flex-1 overflow-y-auto space-y-4">
+                <div class="flex items-center space-x-3">
+                    <img id="modal-avatar" class="w-11 h-11 rounded-full object-cover border">
+                    <div>
+                        <h4 id="modal-username" class="font-bold text-sm">Nama Pengguna</h4>
+                        <span class="text-xs text-slate-500 bg-slate-100 dark:bg-fb-darkInput px-2.5 py-0.5 rounded-full flex items-center w-max mt-0.5"><i class="fa-solid fa-wifi mr-1 text-fb-blue"></i> Publik Lokal</span>
+                    </div>
+                </div>
+                <textarea id="post-content-input" rows="4" placeholder="Apa yang ingin Anda bagikan secara offline?" class="w-full bg-transparent resize-none outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 text-base leading-relaxed"></textarea>
+                
+                <!-- Media Preview -->
+                <div id="media-preview-container" class="hidden relative rounded-2xl overflow-hidden border border-slate-200 dark:border-fb-darkBorder shadow bg-black">
+                    <div id="media-preview-wrapper"></div>
+                    <button onclick="removeMediaPreview()" class="absolute top-2 right-2 w-8 h-8 bg-black/70 text-white rounded-full flex items-center justify-center hover:bg-black transition z-10 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="border border-slate-200 dark:border-fb-darkBorder rounded-2xl p-3 flex items-center justify-between">
+                    <span class="text-sm font-bold">Ambil dari Memori Perangkat</span>
+                    <div class="flex space-x-2">
+                        <label class="w-10 h-10 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-rose-500 hover:bg-slate-200 cursor-pointer transition" title="Kamera / Foto">
+                            <i class="fa-solid fa-camera text-lg"></i>
+                            <input type="file" accept="image/*" onchange="handleHardwareMedia(event, 'image')" class="hidden">
+                        </label>
+                        <label class="w-10 h-10 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-emerald-500 hover:bg-slate-200 cursor-pointer transition" title="Video Perangkat">
+                            <i class="fa-solid fa-video text-lg"></i>
+                            <input type="file" accept="video/*" onchange="handleHardwareMedia(event, 'video')" class="hidden">
+                        </label>
+                        <button onclick="triggerVoiceRecord()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-amber-500 hover:bg-slate-200 transition cursor-pointer" title="Microphone">
+                            <i class="fa-solid fa-microphone text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder">
+                <button onclick="submitPost()" class="w-full bg-fb-blue hover:bg-blue-600 text-white font-extrabold py-3 rounded-xl shadow-lg transition cursor-pointer">Kirim Postingan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Create Video (Watch) -->
+    <div id="modal-video" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg flex items-center"><i class="fa-solid fa-play text-fb-blue mr-2"></i> Unggah Video Watch</h3>
+                <button onclick="closeCreateVideoModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <input type="text" id="video-title-input" placeholder="Judul Video..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-3 rounded-xl text-sm outline-none dark:text-white">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Pilih Berkas Video dari Memori</label>
+                    <input type="file" accept="video/*" id="video-file-input" onchange="handleWatchVideoFile(event)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-fb-blue dark:file:bg-fb-darkInput dark:file:text-white cursor-pointer">
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder flex space-x-2">
+                <button onclick="closeCreateVideoModal()" class="flex-1 bg-slate-200 dark:bg-fb-darkInput font-bold py-2.5 rounded-xl text-sm cursor-pointer">Batal</button>
+                <button onclick="submitWatchVideo()" class="flex-1 bg-fb-blue text-white font-bold py-2.5 rounded-xl text-sm shadow cursor-pointer">Unggah Video</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Create Story -->
+    <div id="modal-story" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg">Buat Cerita (Story)</h3>
+                <button onclick="closeCreateStoryModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <input type="text" id="story-caption" placeholder="Keterangan singkat cerita..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-3 rounded-xl text-sm outline-none dark:text-white">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Pilih Berkas dari Memori Perangkat</label>
+                    <input type="file" accept="image/*, video/*" id="story-img-file" onchange="handleStoryImage(event)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-fb-blue dark:file:bg-fb-darkInput dark:file:text-white cursor-pointer">
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder flex space-x-2">
+                <button onclick="closeCreateStoryModal()" class="flex-1 bg-slate-200 dark:bg-fb-darkInput font-bold py-2.5 rounded-xl text-sm cursor-pointer">Batal</button>
+                <button onclick="submitStory()" class="flex-1 bg-fb-blue text-white font-bold py-2.5 rounded-xl text-sm shadow cursor-pointer">Bagikan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Create Marketplace Item -->
+    <div id="modal-product" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg">Jual Barang di Marketplace</h3>
+                <button onclick="closeCreateProductModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-3">
+                <input type="text" id="prod-title" placeholder="Nama Barang / Produk..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white">
+                <input type="text" id="prod-price" placeholder="Harga (Contoh: Rp 150.000)..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white">
+                <input type="text" id="prod-loc" placeholder="Lokasi (Contoh: Sekitar Perangkat)..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white">
+                <textarea id="prod-desc" rows="3" placeholder="Deskripsi kondisi barang..." class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white resize-none"></textarea>
+                <input type="file" accept="image/*" id="prod-img-file" onchange="handleProductImage(event)" class="w-full text-xs text-slate-500 cursor-pointer">
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder">
+                <button onclick="submitProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow cursor-pointer">Terbitkan Iklan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Edit Profile -->
+    <div id="modal-profile" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg">Edit Profil & Foto Hardware</h3>
+                <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nama Tampilan</label>
+                    <input type="text" id="edit-name-input" class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Bio Singkat</label>
+                    <textarea id="edit-bio-input" rows="2" class="w-full bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-xl text-sm outline-none dark:text-white resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Pilih Foto Profil dari Memori Perangkat</label>
+                    <input type="file" accept="image/*" id="edit-avatar-file" onchange="handleProfileAvatarFile(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-fb-blue dark:file:bg-fb-darkInput dark:file:text-white cursor-pointer">
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-fb-darkBorder flex space-x-2">
+                <button onclick="closeProfileModal()" class="flex-1 bg-slate-200 dark:bg-fb-darkInput font-bold py-2.5 rounded-xl text-sm cursor-pointer">Batal</button>
+                <button onclick="saveProfile()" class="flex-1 bg-fb-blue text-white font-bold py-2.5 rounded-xl text-sm shadow cursor-pointer">Simpan Profil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Comments -->
+    <div id="modal-comments" class="fixed inset-0 bg-black/70 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden flex flex-col h-[80vh] sm:h-[600px]">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg">Komentar</h3>
+                <button onclick="closeCommentsModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="comments-list-container" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+            <div class="p-3 border-t border-slate-100 dark:border-fb-darkBorder flex items-center space-x-2 bg-white dark:bg-fb-darkCard">
+                <input type="text" id="comment-input-field" placeholder="Tulis komentar..." class="flex-1 bg-slate-100 dark:bg-fb-darkInput px-4 py-2.5 rounded-full text-sm outline-none dark:text-white">
+                <button onclick="submitComment()" class="w-10 h-10 bg-fb-blue text-white rounded-full flex items-center justify-center shadow cursor-pointer"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Backup & Sync JSON -->
+    <div id="modal-backup" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-fb-darkCard w-full sm:max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-fb-darkBorder flex justify-between items-center">
+                <h3 class="font-extrabold text-lg">Cadangan & Pemulihan Data</h3>
+                <button onclick="closeBackupModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-fb-darkInput flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4 text-sm">
+                <p class="text-slate-600 dark:text-fb-darkSubtext leading-relaxed">Ekspor seluruh riwayat postingan, video, marketplace, dan pesan Anda menjadi file JSON untuk dipindahkan antar perangkat secara offline.</p>
+                <div class="space-y-2">
+                    <button onclick="exportDataJSON()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2 shadow cursor-pointer">
+                        <i class="fa-solid fa-download"></i><span>Ekspor Data ke File</span>
+                    </button>
+                    <label class="w-full bg-slate-200 dark:bg-fb-darkInput hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2 cursor-pointer shadow">
+                        <i class="fa-solid fa-upload"></i><span>Impor File Cadangan</span>
+                        <input type="file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold z-50 transition-all duration-300 opacity-0 pointer-events-none">
+        Pemberitahuan Berhasil
+    </div>
+
+    <!-- Script Utama -->
+    <script>
+        let currentUser = {
+            name: "Warga MeshNet",
+            bio: "Menghubungkan komunitas secara offline.",
+            avatar: "",
+            activeStatus: true,
+            nodeMode: "p2p"
+        };
+        let posts = [];
+        let stories = [];
+        let videos = [];
+        let products = [];
+        let sharedFiles = [];
+        let chats = [];
+        let activeChatUserId = null;
+        let activeCommentPostId = null;
+
+        let tempMediaData = { type: "", data: "" };
+        let tempStoryMedia = "";
+        let tempProductBase64 = "";
+        let tempVideoFile = "";
+        let tempAvatarBase64 = "";
+
+        const defaultPosts = [
+            {
+                id: "p1",
+                author: "Warga MeshNet",
+                avatar: "",
+                time: "Baru saja",
+                content: "Selamat datang di MeshNet Pro Offline! Aplikasi bersih murni tanpa akun fiktif, didukung fitur Watch, MeshShare, dan hardware penuh.",
+                mediaType: "",
+                mediaData: "",
+                likes: 1,
+                liked: false,
+                comments: []
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadAllData();
+            initDarkMode();
+            renderAll();
+            window.addEventListener('click', (e) => {
+                const dropdown = document.getElementById("profile-dropdown");
+                if(!e.target.closest('#header-avatar') && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+
+        function loadAllData() {
+            try {
+                if(localStorage.getItem("meshnet_user")) currentUser = JSON.parse(localStorage.getItem("meshnet_user"));
+                posts = JSON.parse(localStorage.getItem("meshnet_posts")) || defaultPosts;
+                stories = JSON.parse(localStorage.getItem("meshnet_stories")) || [];
+                videos = JSON.parse(localStorage.getItem("meshnet_videos")) || [];
+                products = JSON.parse(localStorage.getItem("meshnet_products")) || [];
+                sharedFiles = JSON.parse(localStorage.getItem("meshnet_shared")) || [];
+                chats = JSON.parse(localStorage.getItem("meshnet_chats")) || [];
+            } catch(e) {
+                posts = defaultPosts;
+            }
+        }
+
+        function saveAllData() {
+            try {
+                localStorage.setItem("meshnet_user", JSON.stringify(currentUser));
+                localStorage.setItem("meshnet_posts", JSON.stringify(posts));
+                localStorage.setItem("meshnet_stories", JSON.stringify(stories));
+                localStorage.setItem("meshnet_videos", JSON.stringify(videos));
+                localStorage.setItem("meshnet_products", JSON.stringify(products));
+                localStorage.setItem("meshnet_shared", JSON.stringify(sharedFiles));
+                localStorage.setItem("meshnet_chats", JSON.stringify(chats));
+            } catch(e) { console.error(e); }
+        }
+
+        function switchTab(tabId) {
+            ['feed', 'watch', 'market', 'share', 'messages', 'profile'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const navBtn = document.getElementById(`nav-${t}`);
+                const mobBtn = document.getElementById(`mob-nav-${t}`);
+                if(t === tabId) {
+                    if(el) el.classList.remove('hidden');
+                    if(navBtn) navBtn.className = "nav-btn h-full px-5 flex items-center justify-center border-b-4 border-fb-blue text-fb-blue dark:text-blue-500 font-semibold transition rounded-t-lg";
+                    if(mobBtn) mobBtn.className = "mob-nav flex-1 h-full flex items-center justify-center text-fb-blue dark:text-blue-500 text-lg font-bold";
+                } else {
+                    if(el) el.classList.add('hidden');
+                    if(navBtn) navBtn.className = "nav-btn h-full px-5 flex items-center justify-center border-b-4 border-transparent text-slate-500 dark:text-fb-darkSubtext hover:bg-slate-50 dark:hover:bg-fb-darkInput transition rounded-lg";
+                    if(mobBtn) mobBtn.className = "mob-nav flex-1 h-full flex items-center justify-center text-slate-500 dark:text-fb-darkSubtext text-lg";
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(tabId === 'profile') renderProfilePage();
+            if(tabId === 'messages') renderChatSidebar();
+            if(tabId === 'watch') renderVideos();
+            if(tabId === 'share') renderShareList();
+        }
+
+        function renderAll() {
+            const avatarSrc = currentUser.avatar || ('https://placehold.co/100x100/0866FF/ffffff?text=' + currentUser.name[0]);
+            document.getElementById("header-avatar").src = avatarSrc;
+            document.getElementById("dropdown-avatar").src = avatarSrc;
+            document.getElementById("dropdown-name").innerText = currentUser.name;
+            document.getElementById("post-input-avatar").src = avatarSrc;
+            if(document.getElementById("modal-avatar")) document.getElementById("modal-avatar").src = avatarSrc;
+            if(document.getElementById("modal-username")) document.getElementById("modal-username").innerText = currentUser.name;
+            document.getElementById("story-self-avatar").src = avatarSrc;
+            document.getElementById("post-input-name").innerText = currentUser.name.split(" ")[0];
+            updateStatusIndicatorUI();
+            renderStories();
+            renderPosts(posts, "posts-container");
+            renderVideos();
+            renderProducts();
+        }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById("profile-dropdown");
+            dropdown.classList.toggle('hidden');
+        }
+
+        function updateStatusIndicatorUI() {
+            const dot = document.getElementById("status-indicator-dot");
+            const label = document.getElementById("status-text-label");
+            const settingToggle = document.getElementById("setting-status-active");
+            if(settingToggle) settingToggle.checked = currentUser.activeStatus;
+            
+            let modeText = "Peer-to-Peer (P2P)";
+            if(currentUser.nodeMode === 'server') modeText = "Server Node Utama";
+            if(currentUser.nodeMode === 'client') modeText = "Client Node Terhubung";
+
+            if(currentUser.activeStatus) {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500 mr-1.5";
+                label.innerText = `Aktif (${modeText})`;
+                document.getElementById("network-mode-banner-title").innerText = `Mode ${modeText} Aktif`;
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-amber-500 mr-1.5";
+                label.innerText = "Non-Aktif (Invisible)";
+                document.getElementById("network-mode-banner-title").innerText = "Mode Invisible (Tidak Terlihat)";
+            }
+        }
+
+        function toggleActiveStatusSetting(val) {
+            currentUser.activeStatus = val;
+            saveAllData();
+            updateStatusIndicatorUI();
+            showToast(val ? "Status diubah menjadi Aktif" : "Status diubah menjadi Non-Aktif");
+        }
+
+        function setNodeMode(mode) {
+            currentUser.nodeMode = mode;
+            saveAllData();
+            updateStatusIndicatorUI();
+            document.getElementById("current-mode-badge").innerText = mode.toUpperCase();
+            showToast(`Mode perangkat diubah ke: ${mode.toUpperCase()}`);
+        }
+
+        function openServerClientModal() { document.getElementById("modal-server-client").classList.remove('hidden'); }
+        function closeServerClientModal() { document.getElementById("modal-server-client").classList.add('hidden'); }
+        function openSettingsModal() { toggleProfileDropdown(); document.getElementById("modal-settings").classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById("modal-settings").classList.add('hidden'); }
+        
+        function exitApp() {
+            if(confirm("Tutup dan keluar dari aplikasi MeshNet?")) {
+                window.close();
+                showToast("Aplikasi ditutup.");
+            }
+        }
+
+        function handleProfileAvatarFile(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    tempAvatarBase64 = ev.target.result;
+                    showToast("Foto profil dipilih dari memori perangkat.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openProfileModal() {
+            document.getElementById("edit-name-input").value = currentUser.name;
+            document.getElementById("edit-bio-input").value = currentUser.bio;
+            tempAvatarBase64 = "";
+            document.getElementById("modal-profile").classList.remove('hidden');
+        }
+        function closeProfileModal() { document.getElementById("modal-profile").classList.add('hidden'); }
+
+        function saveProfile() {
+            const name = document.getElementById("edit-name-input").value.trim();
+            const bio = document.getElementById("edit-bio-input").value.trim();
+            if(!name) { showToast("Nama tidak boleh kosong!"); return; }
+            currentUser.name = name;
+            currentUser.bio = bio;
+            if(tempAvatarBase64) {
+                currentUser.avatar = tempAvatarBase64;
+            }
+            saveAllData();
+            renderAll();
+            closeProfileModal();
+            showToast("Profil dan foto hardware berhasil diperbarui!");
+        }
+
+        function handleHardwareMedia(e, type) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    tempMediaData = { type: type === 'video' ? 'video' : 'image', data: ev.target.result };
+                    const wrapper = document.getElementById("media-preview-wrapper");
+                    if(type === 'video') {
+                        wrapper.innerHTML = `<video src="${ev.target.result}" controls class="w-full h-52 object-cover"></video>`;
+                    } else {
+                        wrapper.innerHTML = `<img src="${ev.target.result}" class="w-full h-52 object-cover">`;
+                    }
+                    document.getElementById("media-preview-container").classList.remove('hidden');
+                    showToast("Media perangkat berhasil dimuat.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function triggerVoiceRecord() {
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    showToast("Microphone aktif! Merekam suara 3 detik...");
+                    const mediaRecorder = new MediaRecorder(stream);
+                    let audioChunks = [];
+                    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                            tempMediaData = { type: 'audio', data: ev.target.result };
+                            const wrapper = document.getElementById("media-preview-wrapper");
+                            wrapper.innerHTML = `<audio controls src="${ev.target.result}" class="w-full p-4"></audio>`;
+                            document.getElementById("media-preview-container").classList.remove('hidden');
+                            showToast("Rekaman suara berhasil disimpan!");
+                        };
+                        reader.readAsDataURL(audioBlob);
+                    };
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 3000);
+                }).catch(err => {
+                    showToast("Akses microphone ditolak atau tidak tersedia.");
+                });
+            } else {
+                showToast("Hardware microphone tidak didukung.");
+            }
+        }
+
+        function removeMediaPreview() {
+            tempMediaData = { type: "", data: "" };
+            const container = document.getElementById("media-preview-container");
+            if(container) container.classList.add('hidden');
+        }
+
+        function openCreateVideoModal() { document.getElementById("modal-video").classList.remove('hidden'); }
+        function closeCreateVideoModal() { document.getElementById("modal-video").classList.add('hidden'); tempVideoFile = ""; }
+
+        function handleWatchVideoFile(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => tempVideoFile = ev.target.result;
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitWatchVideo() {
+            const title = document.getElementById("video-title-input").value.trim();
+            if(!title || !tempVideoFile) { showToast("Judul dan file video wajib diisi!"); return; }
+            videos.unshift({
+                id: "v_" + Date.now(),
+                author: currentUser.name,
+                avatar: currentUser.avatar || "",
+                title: title,
+                videoUrl: tempVideoFile,
+                views: "1x Ditonton"
+            });
+            saveAllData();
+            renderVideos();
+            closeCreateVideoModal();
+            document.getElementById("video-title-input").value = "";
+            showToast("Video Watch berhasil diunggah!");
+        }
+
+        function renderVideos() {
+            const container = document.getElementById("videos-container");
+            if(!container) return;
+            if(videos.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-400 py-12 text-sm">Belum ada video Watch. Upload video dari perangkat Anda!</div>';
+                return;
+            }
+            container.innerHTML = videos.map(v => `
+                <div class="space-y-2 border-b border-slate-100 dark:border-fb-darkBorder pb-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${v.avatar || 'https://placehold.co/100x100/0866FF/ffffff?text=' + v.author[0]}" class="w-9 h-9 rounded-full object-cover">
+                            <div>
+                                <h4 class="font-bold text-sm">${escapeHtml(v.author)}</h4>
+                                <span class="text-xs text-slate-400">${v.views}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteVideo('${v.id}')" class="text-slate-400 hover:text-red-500 cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                    <h3 class="font-bold text-base px-1">${escapeHtml(v.title)}</h3>
+                    <div class="rounded-2xl overflow-hidden shadow-md bg-black">
+                        <video src="${v.videoUrl}" controls class="w-full max-h-96 object-contain"></video>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function deleteVideo(id) {
+            if(confirm("Hapus video ini?")) {
+                videos = videos.filter(x => x.id !== id);
+                saveAllData();
+                renderVideos();
+                showToast("Video dihapus.");
+            }
+        }
+
+        function renderStories() {
+            const container = document.getElementById("stories-container");
+            if(!container) return;
+            container.innerHTML = stories.map(s => `
+                <div class="min-w-[110px] h-[190px] rounded-2xl overflow-hidden relative shadow-sm border border-slate-200 dark:border-fb-darkBorder cursor-pointer flex flex-col justify-between p-3 bg-slate-900 group">
+                    <div class="absolute inset-0">
+                        ${s.mediaType === 'video' ? `<video src="${s.media}" class="w-full h-full object-cover"></video>` : `<img src="${s.media}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">`}
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
+                    </div>
+                    <img src="${s.avatar || 'https://placehold.co/100x100/0866FF/ffffff?text=' + s.author[0]}" class="w-9 h-9 rounded-full border-2 border-fb-blue object-cover relative z-10">
+                    <span class="text-xs font-bold text-white relative z-10 truncate">${escapeHtml(s.author)}</span>
+                </div>
+            `).join("");
+        }
+
+        function openCreateStoryModal() { document.getElementById("modal-story").classList.remove('hidden'); }
+        function closeCreateStoryModal() { document.getElementById("modal-story").classList.add('hidden'); }
+
+        function handleStoryImage(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => tempStoryMedia = { type: file.type.includes('video') ? 'video' : 'image', data: ev.target.result };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitStory() {
+            const caption = document.getElementById("story-caption").value.trim();
+            if(!tempStoryMedia) { showToast("Pilih berkas dari perangkat untuk cerita!"); return; }
+            stories.unshift({ id: "s_" + Date.now(), author: currentUser.name, avatar: currentUser.avatar || "", mediaType: tempStoryMedia.type, media: tempStoryMedia.data, caption: caption });
+            saveAllData();
+            renderStories();
+            closeCreateStoryModal();
+            showToast("Cerita berhasil dibagikan!");
+        }
+
+        function handleMeshShareFile(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    sharedFiles.unshift({
+                        id: "sf_" + Date.now(),
+                        name: file.name,
+                        size: (file.size / 1024).toFixed(1) + " KB",
+                        type: file.type || "Berkas Lokal",
+                        data: ev.target.result,
+                        time: "Baru saja"
+                    });
+                    saveAllData();
+                    renderShareList();
+                    showToast(`Berkas "${file.name}" siap dibagikan via Wi-Fi / Bluetooth Direct!`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderShareList() {
+            const container = document.getElementById("share-list-container");
+            if(!container) return;
+            if(sharedFiles.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 text-xs py-4">Belum ada riwayat berkas dibagikan.</p>';
+                return;
+            }
+            container.innerHTML = sharedFiles.map(f => `
+                <div class="p-3 bg-slate-50 dark:bg-fb-darkInput rounded-xl flex items-center justify-between">
+                    <div class="flex items-center space-x-3 truncate">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-file"></i></div>
+                        <div class="truncate">
+                            <h4 class="font-bold text-sm truncate">${escapeHtml(f.name)}</h4>
+                            <span class="text-xs text-slate-400">${f.size} • ${f.time}</span>
+                        </div>
+                    </div>
+                    <a href="${f.data}" download="${f.name}" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center space-x-1 cursor-pointer">
+                        <i class="fa-solid fa-download"></i><span>Unduh</span>
+                    </a>
+                </div>
+            `).join("");
+        }
+
+        function openCreatePostModal() { document.getElementById("modal-post").classList.remove('hidden'); }
+        function closeCreatePostModal() { document.getElementById("modal-post").classList.add('hidden'); removeMediaPreview(); }
+
+        function submitPost() {
+            const contentInput = document.getElementById("post-content-input");
+            const content = contentInput ? contentInput.value.trim() : "";
+            if(!content && !tempMediaData.data) {
+                showToast("Postingan tidak boleh kosong!");
+                return;
+            }
+            posts.unshift({
+                id: "p_" + Date.now(),
+                author: currentUser.name,
+                avatar: currentUser.avatar || "",
+                time: "Baru saja",
+                content: content,
+                mediaType: tempMediaData.type,
+                mediaData: tempMediaData.data,
+                likes: 0,
+                liked: false,
+                comments: []
+            });
+            saveAllData();
+            renderAll();
+            closeCreatePostModal();
+            if(contentInput) contentInput.value = "";
+            removeMediaPreview();
+            showToast("Postingan berhasil dibagikan!");
+        }
+
+        function renderPosts(targetPosts, containerId) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            if(targetPosts.length === 0) {
+                container.innerHTML = '<div class="bg-white dark:bg-fb-darkCard rounded-2xl p-8 text-center text-slate-400 border border-slate-200 dark:border-fb-darkBorder">Belum ada postingan.</div>';
+                return;
+            }
+            container.innerHTML = targetPosts.map(post => `
+                <div class="bg-white dark:bg-fb-darkCard rounded-none sm:rounded-2xl shadow-sm border border-slate-200 dark:border-fb-darkBorder overflow-hidden">
+                    <div class="p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${post.avatar || 'https://placehold.co/100x100/0866FF/ffffff?text=' + post.author[0]}" class="w-10 h-10 rounded-full object-cover border">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">${escapeHtml(post.author)}</h4>
+                                <span class="text-xs text-slate-500 dark:text-fb-darkSubtext flex items-center">${post.time} <i class="fa-solid fa-wifi ml-1 text-xs text-fb-blue"></i></span>
+                            </div>
+                        </div>
+                        <button onclick="deletePost('${post.id}')" class="text-slate-400 hover:text-red-500 p-2 cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                    <div class="px-4 pb-3 text-sm text-slate-800 dark:text-slate-100 whitespace-pre-line leading-relaxed">${formatTags(post.content)}</div>
+                    ${post.mediaType === 'image' ? `<div class="w-full bg-slate-900 max-h-[450px] overflow-hidden"><img src="${post.mediaData}" class="w-full h-auto object-cover"></div>` : ''}
+                    ${post.mediaType === 'video' ? `<div class="w-full bg-black"><video src="${post.mediaData}" controls class="w-full max-h-96 object-contain"></video></div>` : ''}
+                    ${post.mediaType === 'audio' ? `<div class="px-4 pb-3"><audio src="${post.mediaData}" controls class="w-full"></audio></div>` : ''}
+                    <div class="px-4 py-2.5 flex justify-between text-xs text-slate-500 dark:text-fb-darkSubtext border-b border-slate-100 dark:border-fb-darkBorder">
+                        <span><i class="fa-solid fa-thumbs-up text-fb-blue mr-1"></i> ${post.likes} Suka</span>
+                        <span onclick="openCommentsModal('${post.id}')" class="cursor-pointer hover:underline">${post.comments.length} Komentar</span>
+                    </div>
+                    <div class="grid grid-cols-2 p-1 text-slate-600 dark:text-fb-darkSubtext font-bold text-sm">
+                        <button onclick="toggleLike('${post.id}')" class="flex items-center justify-center space-x-2 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-fb-darkInput transition cursor-pointer ${post.liked ? 'text-fb-blue' : ''}">
+                            <i class="fa-solid fa-thumbs-up"></i><span>Suka</span>
+                        </button>
+                        <button onclick="openCommentsModal('${post.id}')" class="flex items-center justify-center space-x-2 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-fb-darkInput transition cursor-pointer">
+                            <i class="fa-solid fa-comment"></i><span>Komentar</span>
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function toggleLike(id) {
+            const p = posts.find(x => x.id === id);
+            if(p) {
+                p.liked ? (p.likes--, p.liked = false) : (p.likes++, p.liked = true);
+                saveAllData();
+                renderAll();
+            }
+        }
+
+        function deletePost(id) {
+            if(confirm("Hapus postingan ini?")) {
+                posts = posts.filter(x => x.id !== id);
+                saveAllData();
+                renderAll();
+                showToast("Postingan dihapus.");
+            }
+        }
+
+        function openCommentsModal(postId) {
+            activeCommentPostId = postId;
+            renderCommentsList();
+            document.getElementById("modal-comments").classList.remove('hidden');
+        }
+        function closeCommentsModal() { document.getElementById("modal-comments").classList.add('hidden'); }
+
+        function renderCommentsList() {
+            const p = posts.find(x => x.id === activeCommentPostId);
+            const container = document.getElementById("comments-list-container");
+            if(!p || p.comments.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 text-sm py-12">Belum ada komentar.</p>';
+                return;
+            }
+            container.innerHTML = p.comments.map(c => `
+                <div class="flex space-x-3 items-start">
+                    <img src="${c.avatar || 'https://placehold.co/100x100/0866FF/ffffff?text=' + c.author[0]}" class="w-8 h-8 rounded-full object-cover mt-1 border">
+                    <div class="flex-1 bg-slate-100 dark:bg-fb-darkInput p-3.5 rounded-2xl">
+                        <h5 class="font-bold text-xs">${escapeHtml(c.author)}</h5>
+                        <p class="text-sm mt-0.5">${escapeHtml(c.text)}</p>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function submitComment() {
+            const input = document.getElementById("comment-input-field");
+            const text = input.value.trim();
+            if(!text || !activeCommentPostId) return;
+            const p = posts.find(x => x.id === activeCommentPostId);
+            if(p) {
+                p.comments.push({ id: "c_" + Date.now(), author: currentUser.name, avatar: currentUser.avatar || "", text: text });
+                saveAllData();
+                input.value = "";
+                renderCommentsList();
+                renderAll();
+                showToast("Komentar ditambahkan.");
+            }
+        }
+
+        function renderProducts() {
+            const container = document.getElementById("marketplace-container");
+            if(!container) return;
+            if(products.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-slate-400 py-12 text-sm">Belum ada produk di marketplace.</div>';
+                return;
+            }
+            container.innerHTML = products.map(p => `
+                <div class="bg-white dark:bg-fb-darkCard rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-fb-darkBorder flex flex-col">
+                    <img src="${p.image}" class="w-full h-44 object-cover">
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <span class="text-emerald-600 font-extrabold text-base">${escapeHtml(p.price)}</span>
+                            <h4 class="font-bold text-sm mt-1">${escapeHtml(p.title)}</h4>
+                            <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${escapeHtml(p.location)}</p>
+                        </div>
+                        <button onclick="showToast('Menghubungi penjual ${p.seller} ...')" class="mt-3 w-full bg-slate-100 dark:bg-fb-darkInput hover:bg-slate-200 text-xs font-bold py-2 rounded-xl transition cursor-pointer">Kirim Pesan</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderProfilePage() {
+            document.getElementById("profile-page-avatar").src = currentUser.avatar || ('https://placehold.co/100x100/0866FF/ffffff?text=' + currentUser.name[0]);
+            document.getElementById("profile-page-name").innerText = currentUser.name;
+            document.getElementById("profile-page-bio").innerText = currentUser.bio;
+            const userPosts = posts.filter(p => p.author === currentUser.name);
+            document.getElementById("user-posts-count").innerText = userPosts.length;
+            renderPosts(userPosts, "user-posts-container");
+        }
+
+        function renderChatSidebar() {
+            const container = document.getElementById("chat-list-sidebar");
+            if(!container) return;
+            if(chats.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-400 py-12 text-xs">Belum ada percakapan. Mulai chat baru!</div>';
+                return;
+            }
+            container.innerHTML = chats.map(c => `
+                <div onclick="selectChat('${c.userId}')" class="p-3.5 flex items-center space-x-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-fb-darkInput transition ${activeChatUserId === c.userId ? 'bg-slate-100 dark:bg-fb-darkInput' : ''}">
+                    <img src="${c.avatar || 'https://placehold.co/100x100/0866FF/ffffff?text=' + c.name[0]}" class="w-11 h-11 rounded-full object-cover border">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-sm truncate">${escapeHtml(c.name)}</h4>
+                        <p class="text-xs text-slate-500 truncate mt-0.5">${escapeHtml(c.messages[c.messages.length - 1]?.text || 'Mulai percakapan')}</p>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function selectChat(userId) {
+            activeChatUserId = userId;
+            const chat = chats.find(c => c.userId === userId);
+            if(!chat) return;
+            document.getElementById("active-chat-avatar").src = chat.avatar || ('https://placehold.co/100x100/0866FF/ffffff?text=' + chat.name[0]);
+            document.getElementById("active-chat-name").innerText = chat.name;
+            const scrollArea = document.getElementById("chat-messages-scroll");
+            scrollArea.innerHTML = chat.messages.map(m => `
+                <div class="flex ${m.sender === 'Me' ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-[70%] px-4 py-2.5 rounded-2xl text-sm ${m.sender === 'Me' ? 'bg-fb-blue text-white rounded-br-xs' : 'bg-slate-200 dark:bg-fb-darkInput text-slate-800 dark:text-white rounded-bl-xs'}">
+                        ${escapeHtml(m.text)}
+                    </div>
+                </div>
+            `).join("");
+            scrollArea.scrollTop = scrollArea.scrollHeight;
+            renderChatSidebar();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById("chat-input-msg");
+            const text = input.value.trim();
+            if(!text || !activeChatUserId) return;
+            const chat = chats.find(c => c.userId === activeChatUserId);
+            if(chat) {
+                chat.messages.push({ sender: "Me", text: text });
+                saveAllData();
+                input.value = "";
+                selectChat(activeChatUserId);
+            }
+        }
+
+        function openNewChatModal() {
+            const name = prompt("Masukkan nama rekan peer untuk chat offline:");
+            if(name) {
+                const newId = "u_" + Date.now();
+                chats.unshift({ userId: newId, name, avatar: "", messages: [{sender: name, text: "Terhubung secara lokal."}] });
+                saveAllData();
+                switchTab('messages');
+                selectChat(newId);
+            }
+        }
+
+        function openCreateProductModal() { document.getElementById("modal-product").classList.remove('hidden'); }
+        function closeCreateProductModal() { document.getElementById("modal-product").classList.add('hidden'); }
+
+        function handleProductImage(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => tempProductBase64 = ev.target.result;
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitProduct() {
+            const title = document.getElementById("prod-title").value.trim();
+            const price = document.getElementById("prod-price").value.trim();
+            const loc = document.getElementById("prod-loc").value.trim();
+            if(!title || !price) { showToast("Nama dan harga barang wajib diisi!"); return; }
+            products.unshift({ id: "pr_" + Date.now(), title, price, location: loc || "Lokal", image: tempProductBase64 || "https://placehold.co/600x400/0866FF/ffffff?text=Produk", seller: currentUser.name });
+            saveAllData();
+            renderProducts();
+            closeCreateProductModal();
+            showToast("Barang berhasil diiklankan di marketplace!");
+        }
+
+        function showBackupModal() { document.getElementById("modal-backup").classList.remove('hidden'); }
+        function closeBackupModal() { document.getElementById("modal-backup").classList.add('hidden'); }
+
+        function exportDataJSON() {
+            const backup = { user: currentUser, posts, stories, videos, products, sharedFiles, chats };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `meshnet_pro_backup_${Date.now()}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+            showToast("File cadangan berhasil diunduh!");
+        }
+
+        function importDataJSON(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if(data.user && data.posts) {
+                            currentUser = data.user;
+                            posts = data.posts;
+                            stories = data.stories || stories;
+                            videos = data.videos || videos;
+                            products = data.products || products;
+                            sharedFiles = data.sharedFiles || sharedFiles;
+                            chats = data.chats || chats;
+                            saveAllData();
+                            renderAll();
+                            closeBackupModal();
+                            showToast("Data berhasil dipulihkan!");
+                        } else { showToast("Format file tidak valid."); }
+                    } catch(err) { showToast("Gagal membaca file."); }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function handleGlobalSearch(val) {
+            const query = val.toLowerCase();
+            const filtered = posts.filter(p => p.content.toLowerCase().includes(query) || p.author.toLowerCase().includes(query));
+            renderPosts(filtered, "posts-container");
+        }
+
+        function initDarkMode() {
+            if(localStorage.getItem("meshnet_dark") === "true") {
+                document.documentElement.classList.add('dark');
+                document.getElementById("theme-icon").className = "fa-solid fa-sun";
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem("meshnet_dark", isDark);
+            document.getElementById("theme-icon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast-notification");
+            t.innerText = msg;
+            t.classList.remove('opacity-0', 'pointer-events-none');
+            t.classList.add('opacity-100');
+            setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0', 'pointer-events-none'); }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if(!str) return "";
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function formatTags(text) {
+            if(!text) return "";
+            return escapeHtml(text).replace(/(#[a-zA-Z0-9_]+)/g, '<span class="text-fb-blue font-bold cursor-pointer">$1</span>');
+        }
+    </script>
+</body>
+</html>
