@@ -27,8 +27,8 @@ jobs:
         run: |
           mkdir www
           cp index.html www/
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          # PERUBAHAN: Menambahkan @capacitor/preferences untuk penyimpanan permanen
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/preferences
           npx cap init "MeshNet Sosmed" "com.meshnet.offline" --web-dir www
           npx cap add android
           npx cap sync android
