@@ -32,7 +32,22 @@ jobs:
           npx cap init "MeshNet Sosmed" "com.meshnet.offline" --web-dir www
           npx cap add android
           npx cap sync android
+          
+          # --- FIX KONFLIK KOTLIN ---
+          # Menambahkan konfigurasi untuk memaksa versi Kotlin yang seragam
           cd android
+          echo "" >> build.gradle
+          echo "allprojects {" >> build.gradle
+          echo "    configurations.all {" >> build.gradle
+          echo "        resolutionStrategy {" >> build.gradle
+          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'" >> build.gradle
+          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'" >> build.gradle
+          echo "            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'" >> build.gradle
+          echo "        }" >> build.gradle
+          echo "    }" >> build.gradle
+          echo "}" >> build.gradle
+          # --------------------------
+
           chmod +x gradlew
           ./gradlew assembleDebug
 
